@@ -43,7 +43,7 @@ def main():
     # load the data from the paper
     #responses = generate_sample_data()
     #data_to_csv(responses)
-    responses = load_data("data/dawid_skene.csv")
+    responses = load_data("data/dawid_skene.csv", skip_header=True)
 
     # run EM
     run(responses)
@@ -323,11 +323,13 @@ Returns:
 	responses: a dictionary object of responses:
 		{patients: {observers: [labels]}}
 """
-def load_data(filename):
+def load_data(filename, skip_header):
 	responses = defaultdict(lambda : defaultdict(list))
 
 	with open(filename) as csvfile:
 		reader = csv.reader(csvfile, delimiter=';', quotechar='\"')
+		if skip_header:
+			next(reader, None)  # skip the headers
 		for row in reader:
 			responses[row[0]][row[1]].append(row[2])
 
