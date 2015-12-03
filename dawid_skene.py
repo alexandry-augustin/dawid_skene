@@ -32,6 +32,8 @@ Series C (Applied Statistics), Vol. 28, No. 1, pp. 20-28.
 
 import numpy as np
 import sys
+import csv
+from collections import defaultdict
 
 """
 Function: main()
@@ -39,9 +41,10 @@ Function: main()
 """
 def main():
     # load the data from the paper
-    responses = generate_sample_data()
-    data_to_csv(responses)
-    sys.exit()
+    #responses = generate_sample_data()
+    #data_to_csv(responses)
+    responses = load_data("data.csv")
+
     # run EM
     run(responses)
 
@@ -300,7 +303,11 @@ def calc_likelihood(counts, class_marginals, error_rates):
 
 """
 Function: generate_sample_data()
-    Generate the data from Table 1 in Dawid-Skene (1979) in the proper format
+	Generate the data from Table 1 in Dawid-Skene (1979) in the proper format
+
+Returns:
+	responses: a dictionary object of responses:
+		{patients: {observers: [labels]}}
 """  
 def generate_sample_data():
     responses = {
@@ -352,16 +359,36 @@ def generate_sample_data():
                  }
     return responses
 
+
 """
-	Function: data_to_csv()
+Function: data_to_csv()
 """
 def data_to_csv(responses):
 	f=open("data.csv", "w")
+
 	f.write("patient;observer;response\n") #write header
+
 	for n, patient in enumerate(responses.keys()):
 		for k, observer in enumerate(responses[patient].keys()):
 			for c, response in enumerate(responses[patient][observer]):
 				f.write("%s;%s;%s\n"%(patient, observer, response))
+
+
+"""
+Function: csv_to_data()
+
+Returns:
+	responses: a dictionary object of responses:
+		{patients: {observers: [labels]}}
+"""
+def load_data(filename):
+	responses = defaultdict(lambda : defaultdict(list))
+	with open(filename) as csvfile:
+		reader = csv.reader(csvfile, delimiter=';', quotechar='|')
+		for row in reader:
+			responses[row[0]][row[1]].append(row[2])
+
+	return responses
 
 
 """
