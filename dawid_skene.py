@@ -43,7 +43,7 @@ def main():
     # load the data from the paper
     #responses = generate_sample_data()
     #data_to_csv(responses)
-    responses = load_data("data.csv")
+    responses = load_data("data/dawid_skene.csv")
 
     # run EM
     run(responses)
@@ -299,78 +299,20 @@ def calc_likelihood(counts, class_marginals, error_rates):
         log_L = temp        
         
     return log_L
-    
-
-"""
-Function: generate_sample_data()
-	Generate the data from Table 1 in Dawid-Skene (1979) in the proper format
-
-Returns:
-	responses: a dictionary object of responses:
-		{patients: {observers: [labels]}}
-"""  
-def generate_sample_data():
-    responses = {
-                 1: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 2: {1:[3,3,3], 2:[4], 3:[3], 4:[3], 5:[4]},
-                 3: {1:[1,1,2], 2:[2], 3:[1], 4:[2], 5:[2]},
-                 4: {1:[2,2,2], 2:[3], 3:[1], 4:[2], 5:[1]},
-                 5: {1:[2,2,2], 2:[3], 3:[2], 4:[2], 5:[2]},
-                 6: {1:[2,2,2], 2:[3], 3:[3], 4:[2], 5:[2]},
-                 7: {1:[1,2,2], 2:[2], 3:[1], 4:[1], 5:[1]},
-                 8: {1:[3,3,3], 2:[3], 3:[4], 4:[3], 5:[3]},
-                 9: {1:[2,2,2], 2:[2], 3:[2], 4:[2], 5:[3]},
-                 10: {1:[2,3,2], 2:[2], 3:[2], 4:[2], 5:[3]},
-                 11: {1:[4,4,4], 2:[4], 3:[4], 4:[4], 5:[4]},
-                 12: {1:[2,2,2], 2:[3], 3:[3], 4:[4], 5:[3]},
-                 13: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 14: {1:[2,2,2], 2:[3], 3:[2], 4:[1], 5:[2]},
-                 15: {1:[1,2,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 16: {1:[1,1,1], 2:[2], 3:[1], 4:[1], 5:[1]},
-                 17: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 18: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 19: {1:[2,2,2], 2:[2], 3:[2], 4:[2], 5:[1]},
-                 20: {1:[2,2,2], 2:[1], 3:[3], 4:[2], 5:[2]},
-                 21: {1:[2,2,2], 2:[2], 3:[2], 4:[2], 5:[2]},
-                 22: {1:[2,2,2], 2:[2], 3:[2], 4:[2], 5:[1]},
-                 23: {1:[2,2,2], 2:[3], 3:[2], 4:[2], 5:[2]},
-                 24: {1:[2,2,1], 2:[2], 3:[2], 4:[2], 5:[2]},
-                 25: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 26: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 27: {1:[2,3,2], 2:[2], 3:[2], 4:[2], 5:[2]},
-                 28: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 29: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 30: {1:[1,1,2], 2:[1], 3:[1], 4:[2], 5:[1]},
-                 31: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 32: {1:[3,3,3], 2:[3], 3:[2], 4:[3], 5:[3]},
-                 33: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 34: {1:[2,2,2], 2:[2], 3:[2], 4:[2], 5:[2]},
-                 35: {1:[2,2,2], 2:[3], 3:[2], 4:[3], 5:[2]},
-                 36: {1:[4,3,3], 2:[4], 3:[3], 4:[4], 5:[3]},
-                 37: {1:[2,2,1], 2:[2], 3:[2], 4:[3], 5:[2]},
-                 38: {1:[2,3,2], 2:[3], 3:[2], 4:[3], 5:[3]},
-                 39: {1:[3,3,3], 2:[3], 3:[4], 4:[3], 5:[2]},
-                 40: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 41: {1:[1,1,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 42: {1:[1,2,1], 2:[2], 3:[1], 4:[1], 5:[1]},
-                 43: {1:[2,3,2], 2:[2], 3:[2], 4:[2], 5:[2]},
-                 44: {1:[1,2,1], 2:[1], 3:[1], 4:[1], 5:[1]},
-                 45: {1:[2,2,2], 2:[2], 3:[2], 4:[2], 5:[2]}
-                 }
-    return responses
 
 
 """
 Function: data_to_csv()
+	export data from generate_sample_data() to file
 """
-def data_to_csv(responses):
-	f=open("data.csv", "w")
+def data_to_csv(responses, filename):
+	f=open(filename, "w")
 
 	f.write("patient;observer;response\n") #write header
 
-	for n, patient in enumerate(responses.keys()):
-		for k, observer in enumerate(responses[patient].keys()):
-			for c, response in enumerate(responses[patient][observer]):
+	for patient in responses.keys():
+		for observer in responses[patient].keys():
+			for response in responses[patient][observer]:
 				f.write("%s;%s;%s\n"%(patient, observer, response))
 
 
@@ -383,8 +325,9 @@ Returns:
 """
 def load_data(filename):
 	responses = defaultdict(lambda : defaultdict(list))
+
 	with open(filename) as csvfile:
-		reader = csv.reader(csvfile, delimiter=';', quotechar='|')
+		reader = csv.reader(csvfile, delimiter=';', quotechar='\"')
 		for row in reader:
 			responses[row[0]][row[1]].append(row[2])
 
