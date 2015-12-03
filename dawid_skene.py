@@ -40,6 +40,8 @@ Function: main()
 def main():
     # load the data from the paper
     responses = generate_sample_data()
+    data_to_csv(responses)
+    sys.exit()
     # run EM
     run(responses)
 
@@ -349,6 +351,17 @@ def generate_sample_data():
                  45: {1:[2,2,2], 2:[2], 3:[2], 4:[2], 5:[2]}
                  }
     return responses
+
+"""
+	Function: data_to_csv()
+"""
+def data_to_csv(responses):
+	f=open("data.csv", "w")
+	f.write("patient;observer;response\n") #write header
+	for n, patient in enumerate(responses.keys()):
+		for k, observer in enumerate(responses[patient].keys()):
+			for c, response in enumerate(responses[patient][observer]):
+				f.write("%s;%s;%s\n"%(patient, observer, response))
 
 
 """
