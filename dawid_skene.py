@@ -70,7 +70,9 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
     old_class_marginals = None
     old_error_rates = None
 
-    patient_classes = initialize(counts)
+    patient_classes = initialize(counts) #equation (3.1)
+    print patient_classes
+    sys.exit()
     
     print "Iter\tlog-likelihood\tdelta-CM\tdelta-ER"    
     
@@ -78,13 +80,13 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
     while not converged:     
         iter += 1
         
-        # M-step
-        (class_marginals, error_rates) = m_step(counts, patient_classes)        
+        # M-step: equations (2.3) (2.4)
+        (class_marginals, error_rates) = m_step(counts, patient_classes)
  
-        # E-setp
+        # E-setp: equation (2.5)
         patient_classes = e_step(counts, class_marginals, error_rates)  
         
-        # check likelihood
+        # check likelihood: equation (2.7)
         log_L = calc_likelihood(counts, class_marginals, error_rates)
         
         # check for convergence
@@ -113,7 +115,7 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
     for k in range(nObservers):
         print class_marginals * error_rates[k,:,:]
 
-    np.set_printoptions(precision=4, suppress=True)    
+    np.set_printoptions(precision=3, suppress=True)    
     print "Patient classes"
     for i in range(nPatients):
         print patients[i], patient_classes[i,:] 
