@@ -13,36 +13,37 @@ namespace DawidSkene.Test
 
 		public static void DawidSkene_Test ()
 		{
-/*			int iterations = 100;
-			string[] lines_input = Test.ReadFile("data/dawid_skene.csv", true);
-			List<Datum> labelings = DawidSkene.LoadLabels(lines_input, ',');
-			DawidSkene ds = new DawidSkene(labelings);
+			int max_iter = 100;
+			List<Datum> responses = Test.LoadData("../../../../../data/dawid_skene.csv", true);
+			DawidSkene ds = new DawidSkene(responses);
 
-			// Save the majority vote before the D&S estimation
-			//HashMap<String,String> prior_voting = ds.getMajorityVote();
-			//Utils.writeFile( ds.printVote(), "./pre-majority-vote.txt");
-
-			ds.Estimate(iterations);
+			ds.Run(max_iter);
 
 			Console.WriteLine ("I={0} J={1} K={2}", ds.I, ds.J, ds.K);
-			Console.WriteLine(ds.PrintPriors());
-			Console.WriteLine(ds.PrintConfusionMatrices());*/
+//			Console.WriteLine(ds.PrintPriors());
+//			Console.WriteLine(ds.PrintConfusionMatrices());
 		}
-		private static string[] ReadFile(string filename, bool skip_header)
+		private static List<Datum> LoadData(string filename, bool skip_header, char sep=';')
 		{
+			List<Datum> responses=new List<Datum>();
 			StreamReader sr = new StreamReader(filename);
-			List<string> lines = new List<string>();
 			string line = null;
-			while ((line = sr.ReadLine()) != null) {
+			while ((line = sr.ReadLine()) != null)
+			{
 				if (skip_header)
 				{
 					skip_header = false;
 					continue;
 				}
-				lines.Add(line);
+				string[] entries = line.Split (sep);
+				if (entries.Length == 3)
+				{
+					responses.Add(new Datum (entries[1], entries[0], entries[2]));
+				}
 			}
 			sr.Close();
-			return lines.ToArray();
+
+			return responses;
 		}
 	}
 }
