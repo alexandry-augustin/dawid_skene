@@ -8,39 +8,19 @@ namespace DawidSkene
 {
     public class DawidSkene
     {
-		/// <summary>
-		/// 
-		/// </summary>
 		public List<Datum> responses;
-		/// <summary>
-		/// 
-		/// </summary>
 		public int[, ,] counts;
-        /// <summary>
-        /// We have I tasks
-        /// </summary>
+
 		public int nPatients { get; protected set; }
-        /// <summary>
-        /// We have J possible labels per object
-        /// </summary>
 		public int nClasses { get; protected set; }
-        /// <summary>
-        /// We have K annotators
-        /// </summary>
 		public int nObservers { get; protected set; }
-        /// <summary>
-        /// Error rate (confusion matrix) for each annotator.
-		/// errorRates[k][j][l] is the probability that annotator k, classifies an item from category j to category l
-        /// </summary>
+
+		public List<string> patients { get; protected set; }
+		public List<string> classes { get; protected set; }
+		public List<string> observers { get; protected set; }
+
 		public double[, ,] errorRates { get; protected set; }
-        /// <summary>
-        /// Priors for the different classes.
-        /// </summary>
         double[] classMarginals;
-        /// <summary>
-        /// The probabilities of different labels for each object.
-        /// T[oid][l] is the probability that the object oid belong to class l.
-        /// </summary>
         double[,] T;
 
 		public DawidSkene(List<Datum> responses)
@@ -82,7 +62,45 @@ namespace DawidSkene
 
 		public void responses_to_counts()
 		{
-			//responses
+			// determine the observers and classes
+			this.observers=this.responses.Select (n => n.observer).Distinct().ToList();
+			this.observers.Sort ();
+			this.nObservers=this.observers.Count;
+
+			this.patients=this.responses.Select (n => n.patient).Distinct().ToList();
+			this.patients.Sort ();
+			this.nPatients=this.patients.Count;
+
+			this.classes = this.responses.Select (n => n.label).Distinct ().ToList ();
+			this.classes.Sort ();
+			this.nClasses=this.classes.Count;
+
+
+			// create a 3d array to hold counts
+			this.counts = new int[this.nPatients, this.nObservers, this.nClasses];
+
+			// convert responses to counts
+			int i=0; int j=0; int k=0;
+			/*foreach(var patient in this.patients)
+			{
+				i = patients.IndexOf(patient);
+				foreach(var observer in this.responses[patient].keys())
+				{
+					k = observers.IndexOf(observer)
+					foreach(var response in this.responses[patient][observer])
+					{
+							j = classes.IndexOf(response);
+							this.counts[i, k, j] += 1;
+					}
+				}
+			}*/
+			foreach (var r in this.responses)
+			{
+				i = patients.IndexOf(r.patient);
+				j = classes.IndexOf(r.label);
+				k = observers.IndexOf (r.observer);
+				this.counts[i, k, j] += 1;
+			}
 		}
 
 		public void initialize()

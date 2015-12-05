@@ -17,9 +17,9 @@ namespace DawidSkene.Test
 			List<Datum> responses = Test.LoadData("../../../../../data/dawid_skene.csv", true);
 			DawidSkene ds = new DawidSkene(responses);
 
-			ds.Run(max_iter);
+			ds.run(max_iter);
 
-			Console.WriteLine ("I={0} J={1} K={2}", ds.I, ds.J, ds.K);
+			Console.WriteLine ("nPatients={0} nClasses={1} nObservers={2}", ds.nPatients, ds.nClasses, ds.nObservers);
 //			Console.WriteLine(ds.PrintPriors());
 //			Console.WriteLine(ds.PrintConfusionMatrices());
 		}
