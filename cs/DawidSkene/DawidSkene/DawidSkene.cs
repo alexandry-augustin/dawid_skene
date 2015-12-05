@@ -19,15 +19,15 @@ namespace DawidSkene
         /// <summary>
         /// We have I tasks
         /// </summary>
-		public int I { get; protected set; }
+		public int nPatients { get; protected set; }
         /// <summary>
         /// We have J possible labels per object
         /// </summary>
-		public int J { get; protected set; }
+		public int nClasses { get; protected set; }
         /// <summary>
         /// We have K annotators
         /// </summary>
-		public int K { get; protected set; }
+		public int nObservers { get; protected set; }
         /// <summary>
         /// Error rate (confusion matrix) for each annotator.
 		/// errorRates[k][j][l] is the probability that annotator k, classifies an item from category j to category l
@@ -46,17 +46,12 @@ namespace DawidSkene
 		public DawidSkene(List<Datum> responses)
         {
 			this.responses = responses;
-
         }
 
-		private void ResponsesToCounts()
-		{
-		}
-
-		public void Run(int max_iter)
+		public void run(int max_iter)
 		{
 			// convert responses to counts
-			ResponsesToCounts ();
+			responses_to_counts ();
 			int patients = 0;
 			int observers=0;
 			int classes=0;
@@ -67,15 +62,15 @@ namespace DawidSkene
 			// initialize
 			int iter = 0;
 
-			/*patient_classes = */Initialize (); //equation (3.1)
+			/*patient_classes = */initialize (); //equation (3.1)
 
 			Console.WriteLine ("Iter\tlog-likelihood\tdelta-CM\tdelta-ER");
 
 			while(iter<max_iter)
 			{
 				iter += 1;
-				MStep ();
-				EStep ();
+				m_step ();
+				e_step ();
 			}
 
 			// Print final results
@@ -85,19 +80,20 @@ namespace DawidSkene
 			Console.WriteLine ("Patient classes");
 		}
 
-		public void responsesToCounts()
+		public void responses_to_counts()
+		{
+			//responses
+		}
+
+		public void initialize()
 		{
 		}
 
-		public void Initialize()
+		private void m_step()
 		{
 		}
 
-		private void MStep()
-		{
-		}
-
-		private void EStep()
+		private void e_step()
 		{
 		}
     }

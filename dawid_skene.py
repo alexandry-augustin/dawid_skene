@@ -176,7 +176,7 @@ def responses_to_counts(responses):
 """
 Function: initialize()
     Get initial estimates for the true patient classes using counts
-    see equation 3.1 in Dawid-Skene (1979)
+    see equation (3.1) in Dawid-Skene (1979)
 Input:
     counts: counts of the number of times each response was received 
         by each observer from each patient: [patients x observers x classes] 
