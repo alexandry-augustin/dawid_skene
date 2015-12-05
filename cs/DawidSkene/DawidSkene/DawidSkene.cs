@@ -19,9 +19,9 @@ namespace DawidSkene
 		public List<string> classes { get; protected set; }
 		public List<string> observers { get; protected set; }
 
-		public double[, ,] errorRates { get; protected set; }
-        double[] classMarginals;
-        double[,] T;
+		public double[, ,] error_rates { get; protected set; }
+		double[] class_marginals;
+        double[,] patient_classes;
 
 		public DawidSkene(List<Datum> responses)
         {
@@ -42,7 +42,7 @@ namespace DawidSkene
 			// initialize
 			int iter = 0;
 
-			/*patient_classes = */initialize (); //equation (3.1)
+			initialize (); //equation (3.1)
 
 			Console.WriteLine ("Iter\tlog-likelihood\tdelta-CM\tdelta-ER");
 
@@ -60,7 +60,7 @@ namespace DawidSkene
 			Console.WriteLine ("Patient classes");
 		}
 
-		public void responses_to_counts()
+		private void responses_to_counts()
 		{
 			// determine the observers and classes
 			this.observers=this.responses.Select (n => n.observer).Distinct().ToList();
@@ -103,8 +103,29 @@ namespace DawidSkene
 			}
 		}
 
-		public void initialize()
+		private void initialize()
 		{
+			int[,] response_sums=new int[this.nPatients, this.nClasses];
+
+			// sum over observers
+			for(int  i=0; i<this.nPatients; ++i)
+				for(int  j=0; j<this.nClasses; ++j)
+					for(int  k=0; k<this.nObservers; ++k)
+						response_sums[i,j] += this.counts[i,k,j];
+
+			int[] response_sums_=new int[this.nPatients];
+
+			for (int i = 0; i < this.nPatients; ++i)
+				for (int j = 0; j < this.nClasses; ++j)
+					response_sums_[i] += response_sums[i,j];
+
+			// create an empty array
+			this.patient_classes=new double[this.nPatients, this.nClasses];
+
+			for (int i = 0; i < this.nPatients; ++i)
+				for (int j = 0; j < this.nClasses; ++j)
+					this.patient_classes[i,j] = response_sums[i,j] / (double)response_sums_[i];
+
 		}
 
 		private void m_step()
