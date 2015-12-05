@@ -81,19 +81,6 @@ namespace DawidSkene
 
 			// convert responses to counts
 			int i=0; int j=0; int k=0;
-			/*foreach(var patient in this.patients)
-			{
-				i = patients.IndexOf(patient);
-				foreach(var observer in this.responses[patient].keys())
-				{
-					k = observers.IndexOf(observer)
-					foreach(var response in this.responses[patient][observer])
-					{
-							j = classes.IndexOf(response);
-							this.counts[i, k, j] += 1;
-					}
-				}
-			}*/
 			foreach (var r in this.responses)
 			{
 				i = patients.IndexOf(r.patient);
