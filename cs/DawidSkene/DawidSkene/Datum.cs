@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace DawidSkene
 {
@@ -29,6 +30,29 @@ namespace DawidSkene
 			this.observer = observer;
 			this.patient = patient;
 			this.label = label;
+		}
+
+		public static List<Datum> LoadData(string filename, bool skip_header, char sep=';')
+		{
+			List<Datum> responses=new List<Datum>();
+			StreamReader sr = new StreamReader(filename);
+			string line = null;
+			while ((line = sr.ReadLine()) != null)
+			{
+				if (skip_header)
+				{
+					skip_header = false;
+					continue;
+				}
+				string[] entries = line.Split (sep);
+				if (entries.Length == 3)
+				{
+					responses.Add(new Datum (entries[1], entries[0], entries[2]));
+				}
+			}
+			sr.Close();
+
+			return responses;
 		}
 	}
 }
