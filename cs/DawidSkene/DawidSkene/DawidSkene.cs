@@ -9,7 +9,7 @@ namespace DawidSkene
     public class DawidSkene
     {
 		public List<Datum> responses;
-		public int[, ,] counts;
+		public int[,,] counts;
 
 		public int nPatients { get; protected set; }
 		public int nClasses { get; protected set; }
@@ -19,7 +19,7 @@ namespace DawidSkene
 		public List<string> classes { get; protected set; }
 		public List<string> observers { get; protected set; }
 
-		public double[, ,] error_rates { get; protected set; }
+		public double[,,] error_rates { get; protected set; }
 		double[] class_marginals;
         double[,] patient_classes;
 
@@ -116,14 +116,75 @@ namespace DawidSkene
 				for (int j = 0; j < this.nClasses; ++j)
 					this.patient_classes[i,j] = response_sums[i,j] / (double)response_sums_[i];
 
+			this.class_marginals=new double[this.nClasses];
+			this.error_rates=new double[this.nObservers, this.nClasses, this.nClasses];
 		}
 
 		private void m_step()
 		{
+			// compute class marginals
+			double[] class_sums=new double[this.nClasses];
+
+			for (int j = 0; j < this.nClasses; ++j)
+				for (int i = 0; i < this.nPatients; ++i)
+					class_sums[j] += this.patient_classes[i,j];
+
+			for (int j = 0; j < this.nClasses; ++j)
+				this.class_marginals[j] = class_sums[j] / (double)this.nPatients;
+				
+			// compute error rates
+			for(int  k=0; k<this.nObservers; ++k)
+				for (int j = 0; j < this.nClasses; ++j)
+					for (int l = 0; l < this.nClasses; ++l)
+						this.error_rates[k,j,l] = 0;
+
+			double[] patient_classes_slice=new double[this.nPatients];
+			int[] counts_slice=new int[this.nPatients];
+			double[] error_rates_slice=new double[this.nClasses];
+			double sum_over_responses=0;
+			for(int  k=0; k<this.nObservers; ++k)
+			{
+				for (int j = 0; j < this.nClasses; ++j)
+				{
+					for (int l = 0; l < this.nClasses; ++l)
+					{
+						//compute slices
+						for (int i = 0; i < this.nPatients; ++i)
+						{
+							patient_classes_slice[i]=this.patient_classes[i,j];
+							counts_slice[i]=this.counts[i,k,l];
+						}
+
+						this.error_rates [k, j, l] = patient_classes_slice.Zip (counts_slice, (d1, d2) => d1 * d2).Sum (); //dot product
+					}
+					// normalize by summing over all observation classes
+					for (int l = 0; l < this.nClasses; ++l)
+						error_rates_slice[l]=error_rates[k,j,l];
+
+					sum_over_responses=error_rates_slice.Sum();
+					if(sum_over_responses>0)
+						for (int l = 0; l < this.nClasses; ++l)
+							error_rates[k,j,l]=error_rates[k,j,l]/(double)sum_over_responses;
+				}
+			}
 		}
 
 		private void e_step()
 		{
+			for (int i = 0; i < this.nPatients; ++i)
+				for (int j = 0; j < this.nClasses; ++j)
+					this.patient_classes[i,j] = 0;
+
+			/*for i in range(nPatients):
+				for j in range(nClasses):
+					estimate = class_marginals[j]
+					estimate *= np.prod(np.power(error_rates[:,j,:], counts[i,:,:]))
+
+					patient_classes[i,j] = estimate
+				// normalize error rates by dividing by the sum over all observation classes
+				patient_sum = np.sum(patient_classes[i,:])
+				if patient_sum > 0:
+					patient_classes[i,:] = patient_classes[i,:]/(double)patient_sum*/
 		}
 
 		public string error_rates_str()
