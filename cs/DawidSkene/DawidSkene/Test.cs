@@ -26,7 +26,7 @@ namespace DawidSkene.Test
 		public static void Utils_Test ()
 		{
 			int[,] a= new int[,] { {1, 0}, {3, 6}, {9, 12} };
-			int[] ret=Utils.Slice2D (a, 1, 1);
+			var ret=Utils.Slice2D (a, 1, 1);
 
 			for(int i=0; i<ret.Length; i++)
 				Console.Write (string.Format("{0} ", ret[i]));

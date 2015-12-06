@@ -4,9 +4,9 @@ namespace DawidSkene
 {
 	public class Utils
 	{
-		public static int[] Slice2D(int[,] a, int axe, int index)
+		public static T[] Slice2D<T>(T[,] a, int axe, int index)
 		{
-			int[] ret=new int[a.GetLength(axe)];
+			T[] ret=new T[a.GetLength(axe)];
 
 			for(int i=0; i<ret.Length; i++)
 			{
@@ -19,9 +19,9 @@ namespace DawidSkene
 			return ret;
 		}
 
-		/*public static double[,] Slice3D(double[,,] a, int axe, int index)
+		/*public static T[,] Slice3D<T>(T[,,] a, int axe, int index)
 		{
-			int[,] ret=new int[a.GetLength(axe)];
+			T[,] ret=new int[a.GetLength(axe)];
 
 			for(int i=0; i<a.GetLength(axe); i++)
 			{
