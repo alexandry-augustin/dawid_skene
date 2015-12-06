@@ -13,7 +13,7 @@ namespace DawidSkene.Test
 		public static void DawidSkene_Test ()
 		{
 			int max_iter = 100;
-			List<Datum> responses = Datum.load_data("../../../../../data/dawid_skene.csv", true);
+			List<Datum> responses = Datum.load_data("../../../../../data/dawid_skene.csv", true, ';');
 			DawidSkene ds = new DawidSkene(responses);
 
 			ds.run(max_iter);
