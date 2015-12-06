@@ -32,7 +32,7 @@ namespace DawidSkene
 			this.label = label;
 		}
 
-		public static List<Datum> LoadData(string filename, bool skip_header, char sep=';')
+		public static List<Datum> load_data(string filename, bool skip_header, char sep=';')
 		{
 			List<Datum> responses=new List<Datum>();
 			StreamReader sr = new StreamReader(filename);
