@@ -175,16 +175,27 @@ namespace DawidSkene
 				for (int j = 0; j < this.nClasses; ++j)
 					this.patient_classes[i,j] = 0;
 
-			/*for i in range(nPatients):
-				for j in range(nClasses):
-					estimate = class_marginals[j]
-					estimate *= np.prod(np.power(error_rates[:,j,:], counts[i,:,:]))
+			int[,] counts_slice=new int[this.nObservers, this.nClasses];
+			double[,] error_rates_slice=new double[this.nObservers, this.nClasses];
+			double[] patient_classes_slice=new double[this.nClasses];
+			double patient_sum = 0;
+			double estimate = 0;
+			for (int i = 0; i < this.nPatients; ++i)
+			{
+				for (int j = 0; j < this.nClasses; ++j)
+				{
+					estimate=this.class_marginals[j];
+					//estimate *= np.prod(np.power(error_rates[:,j,:], counts[i,:,:]))
+					//estimate *= ;
 
-					patient_classes[i,j] = estimate
+					this.patient_classes [i, j] = estimate;
+				}
 				// normalize error rates by dividing by the sum over all observation classes
-				patient_sum = np.sum(patient_classes[i,:])
-				if patient_sum > 0:
-					patient_classes[i,:] = patient_classes[i,:]/(double)patient_sum*/
+				patient_sum = patient_classes_slice.Sum ();
+				if (patient_sum > 0)
+					for (int l = 0; l < this.nClasses; ++l)
+						patient_classes [i, l] = patient_classes [i, l] / (double)patient_sum;
+			}
 		}
 
 		public string error_rates_str()
