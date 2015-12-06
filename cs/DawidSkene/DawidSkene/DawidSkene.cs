@@ -55,13 +55,12 @@ namespace DawidSkene
 
 			// Print final results
 			Console.WriteLine ("Class marginals");
-			Console.WriteLine ("{0}", this.class_marginals); //FIXME
+			Console.WriteLine ("{0}", this.class_marginals_str());
 			Console.WriteLine ("Error rates");
-			Console.WriteLine ("{0}", this.error_rates_str()); //FIXME
+			Console.WriteLine ("{0}", this.error_rates_str());
 			  
 			Console.WriteLine ("Patient classes");
-			for (int i=0; i<this.nPatients; i++)
-				Console.WriteLine ("{0} {1}", i, patient_classes[i, 0]); //FIXME
+			Console.WriteLine ("{0}", this.patient_classes_str());
 		}
 
 		private void responses_to_counts()
@@ -99,8 +98,8 @@ namespace DawidSkene
 
 			// sum over observers
 			for(int  i=0; i<this.nPatients; ++i)
-				for(int  j=0; j<this.nClasses; ++j)
-					for(int  k=0; k<this.nObservers; ++k)
+				for(int j=0; j<this.nClasses; ++j)
+					for(int k=0; k<this.nObservers; ++k)
 						response_sums[i,j] += this.counts[i,k,j];
 
 			int[] response_sums_=new int[this.nPatients];
@@ -175,8 +174,9 @@ namespace DawidSkene
 				for (int j = 0; j < this.nClasses; ++j)
 					this.patient_classes[i,j] = 0;
 
-			int[,] counts_slice=new int[this.nObservers, this.nClasses];
-			double[,] error_rates_slice=new double[this.nObservers, this.nClasses];
+			int[,] counts_slice=new int[this.nObservers, this.nClasses];	//TODO remove
+			double[,] error_rates_slice=new double[this.nObservers, this.nClasses];	//TODO remove
+			double[,] error_rates_pow=new double[this.nObservers, this.nClasses]; //TODO remove
 			double[] patient_classes_slice=new double[this.nClasses];
 			double patient_sum = 0;
 			double estimate = 0;
@@ -185,12 +185,24 @@ namespace DawidSkene
 				for (int j = 0; j < this.nClasses; ++j)
 				{
 					estimate=this.class_marginals[j];
-					//estimate *= np.prod(np.power(error_rates[:,j,:], counts[i,:,:]))
-					//estimate *= ;
 
+					// compute slices
+					for(int  k=0; k<this.nObservers; ++k)
+						for (int l = 0; l < this.nClasses; ++l)
+						{
+							counts_slice[k,l]=this.counts[i,k,l];	//TODO remove
+							error_rates_slice[k,l]=this.error_rates[k,j,l];	//TODO remove
+							error_rates_pow[k,l]=Math.Pow(error_rates_slice[k,l], counts_slice[k,l]); //TODO remove
+							estimate *= error_rates_pow [k, l];
+						}
+							
 					this.patient_classes [i, j] = estimate;
 				}
 				// normalize error rates by dividing by the sum over all observation classes
+				// compute slices
+				for (int j = 0; j < this.nClasses; ++j)
+					patient_classes_slice[j]=this.patient_classes[i,j];
+
 				patient_sum = patient_classes_slice.Sum ();
 				if (patient_sum > 0)
 					for (int l = 0; l < this.nClasses; ++l)
@@ -203,7 +215,7 @@ namespace DawidSkene
 			StringBuilder sb = new StringBuilder();
 			for (int k = 0; k < this.nObservers; k++)
 			{
-				sb.AppendLine (string.Format("\nobserver {0}:", k));
+				sb.AppendLine (string.Format("observer {0}:", k));
 				for (int j = 0; j < this.nClasses; j++)
 				{
 					for (int l = 0; l < this.nClasses; l++)
@@ -214,6 +226,31 @@ namespace DawidSkene
 				}
 			}
 			return sb.ToString();
+		}
+
+		public string patient_classes_str()
+		{
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < this.nPatients; i++)
+			{
+				sb.Append (string.Format("{0} [", i));
+				for (int j = 0; j < this.nClasses; ++j)
+					sb.Append (string.Format("{0:0.000} ", i, this.patient_classes [i, j]));
+				sb.Append ("]\n");
+			}
+			return sb.ToString ();
+		}
+
+		public string class_marginals_str()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append ("[");
+			for(int j=0; j<this.nClasses; ++j)
+				sb.Append(string.Format("{0:0.00} ", this.class_marginals[j]));
+			sb.Append ("]\n");
+
+			return sb.ToString ();
 		}
     }
 }
