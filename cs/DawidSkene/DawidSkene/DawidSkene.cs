@@ -55,9 +55,13 @@ namespace DawidSkene
 
 			// Print final results
 			Console.WriteLine ("Class marginals");
+			Console.WriteLine ("{0}", this.class_marginals); //FIXME
 			Console.WriteLine ("Error rates");
+			Console.WriteLine ("{0}", this.error_rates_str()); //FIXME
 			  
 			Console.WriteLine ("Patient classes");
+			for (int i=0; i<this.nPatients; i++)
+				Console.WriteLine ("{0} {1}", i, patient_classes[i, 0]); //FIXME
 		}
 
 		private void responses_to_counts()
@@ -74,7 +78,6 @@ namespace DawidSkene
 			this.classes = this.responses.Select (n => n.label).Distinct ().ToList ();
 			this.classes.Sort ();
 			this.nClasses=this.classes.Count;
-
 
 			// create a 3d array to hold counts
 			this.counts = new int[this.nPatients, this.nObservers, this.nClasses];
@@ -121,6 +124,24 @@ namespace DawidSkene
 
 		private void e_step()
 		{
+		}
+
+		public string error_rates_str()
+		{
+			StringBuilder sb = new StringBuilder();
+			for (int k = 0; k < this.nObservers; k++)
+			{
+				sb.AppendLine (string.Format("\nobserver {0}:", k));
+				for (int j = 0; j < this.nClasses; j++)
+				{
+					for (int l = 0; l < this.nClasses; l++)
+					{
+						sb.Append (string.Format("{0:0.00}\t", this.error_rates [k, j, l]));
+					}
+					sb.Append ("\n");
+				}
+			}
+			return sb.ToString();
 		}
     }
 }
