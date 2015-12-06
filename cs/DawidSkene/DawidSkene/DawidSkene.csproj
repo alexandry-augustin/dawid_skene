@@ -34,5 +34,6 @@
     <Compile Include="Datum.cs" />
     <Compile Include="DawidSkene.cs" />
     <Compile Include="Test.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
 </Project>
