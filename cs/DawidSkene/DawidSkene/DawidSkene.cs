@@ -235,7 +235,7 @@ namespace DawidSkene
 			{
 				sb.Append (string.Format("{0} [", i));
 				for (int j = 0; j < this.nClasses; ++j)
-					sb.Append (string.Format("{0:0.000} ", i, this.patient_classes [i, j]));
+					sb.Append (string.Format("{0:0.000} ", this.patient_classes [i, j]));
 				sb.Append ("]\n");
 			}
 			return sb.ToString ();
