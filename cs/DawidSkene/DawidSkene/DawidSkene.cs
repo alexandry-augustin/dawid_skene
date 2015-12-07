@@ -74,9 +74,6 @@ namespace DawidSkene
 				// check for convergence
 				if (old_class_marginals != null)
 				{
-					old_class_marginals=new double[this.nClasses];
-					old_error_rates=new double[this.nObservers, this.nClasses, this.nClasses];
-
 					class_marginals_diff=0.0;
 					for (int j = 0; j < this.nClasses; ++j)
 						class_marginals_diff += Math.Abs (this.class_marginals [j] - old_class_marginals [j]);
