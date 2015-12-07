@@ -231,6 +231,8 @@ namespace DawidSkene
 
 		public void calc_likelihood()
 		{
+			this.log_L = 0.0;
+
 			double temp = 0.0;
 			double patient_likelihood = 0.0;
 			double class_prior;
