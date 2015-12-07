@@ -28,6 +28,8 @@ namespace DawidSkene
 		double[] class_marginals;
         double[,] patient_classes;
 
+		public double log_L { get; protected set; }
+
 		public DawidSkene(List<Datum> responses)
         {
 			this.responses = responses;
@@ -36,7 +38,7 @@ namespace DawidSkene
 		public void run(int max_iter)
 		{
 			// convert responses to counts
-			responses_to_counts ();
+			responses_to_counts (); // initialize this.counts
 			Console.WriteLine ("num Patients: {0}", this.nPatients);
 			Console.WriteLine ("Observers: [{0}]", String.Join(" ", this.observers.ToArray()));
 			Console.WriteLine ("Classes: [{0}]", String.Join(" ", this.classes.ToArray()));
@@ -44,15 +46,26 @@ namespace DawidSkene
 			// initialize
 			int iter = 0;
 
-			initialize (); //equation (3.1)
+			initialize (); // initialize this.patient_classes - equation (3.1)
 
 			Console.WriteLine ("Iter\tlog-likelihood\tdelta-CM\tdelta-ER");
 
 			while(iter<max_iter)
 			{
 				iter += 1;
+
+				// M-step: equations (2.3) (2.4)
+				// maximize this.class_marginals and this.error_rates
 				m_step ();
+
+				// E-setp: equation (2.5)
+				// estimate this.patient_classes
 				e_step ();
+
+				// check likelihood: equation (2.7)
+				calc_likelihood();
+
+				Console.WriteLine ("{0}\t{1:0.000}\t\t", iter, this.log_L);
 			}
 
 			// Print final results
@@ -61,6 +74,10 @@ namespace DawidSkene
 			Console.WriteLine ("Error rates");
 			Console.WriteLine ("{0}", this.error_rates_str());
 			  
+			/*Console.WriteLine ("Incidence-of-error rates");
+			for (int k = 0; k < this.nObservers; ++k)
+				//print class_marginals * error_rates[k,:,:]*/
+
 			Console.WriteLine ("Patient classes");
 			Console.WriteLine ("{0}", this.patient_classes_str());
 		}
@@ -209,6 +226,49 @@ namespace DawidSkene
 				if (patient_sum > 0)
 					for (int l = 0; l < this.nClasses; ++l)
 						patient_classes [i, l] = patient_classes [i, l] / (double)patient_sum;
+			}
+		}
+
+		public void calc_likelihood()
+		{
+			double temp = 0.0;
+			double patient_likelihood = 0.0;
+			double class_prior;
+			double patient_class_likelihood=1.0;
+			double patient_class_posterior=0.0;
+			int[,] counts_slice=new int[this.nObservers, this.nClasses];	//TODO remove
+			double[,] error_rates_slice=new double[this.nObservers, this.nClasses];	//TODO remove
+			double[,] error_rates_pow=new double[this.nObservers, this.nClasses]; //TODO remove
+			for (int i = 0; i < this.nPatients; ++i)
+			{
+				patient_likelihood = 0.0;
+				for (int j = 0; j < this.nClasses; ++j)
+				{
+					class_prior=this.class_marginals [j];
+
+					// compute slices
+					patient_class_likelihood=1.0;
+					for (int k = 0; k < this.nObservers; ++k)
+						for (int l = 0; l < this.nClasses; ++l)
+						{
+							counts_slice [k, l] = this.counts [i, k, l];	//TODO remove
+							error_rates_slice [k, l] = this.error_rates [k, j, l];	//TODO remove
+							error_rates_pow [k, l] = Math.Pow (error_rates_slice [k, l], counts_slice [k, l]); //TODO remove
+							patient_class_likelihood *= error_rates_pow [k, l];
+						}
+
+					patient_class_posterior=class_prior * patient_class_likelihood;
+					patient_likelihood += patient_class_posterior;
+				}
+
+				temp=this.log_L + Math.Log(patient_likelihood);
+
+				if (double.IsNaN (temp) || double.IsInfinity (temp))
+				{
+					Console.WriteLine ("{0} {1} {2} {3}", i, this.log_L, Math.Log(patient_likelihood), temp);
+					Environment.Exit (1);
+				}
+				this.log_L=temp;
 			}
 		}
 
