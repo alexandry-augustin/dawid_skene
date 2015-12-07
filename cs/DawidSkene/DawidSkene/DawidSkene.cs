@@ -29,13 +29,14 @@ namespace DawidSkene
         double[,] patient_classes;
 
 		public double log_L { get; protected set; }
+		public bool converged { get; protected set; }
 
 		public DawidSkene(List<Datum> responses)
         {
 			this.responses = responses;
         }
 
-		public void run(int max_iter)
+		public void run(double tol=0.00001, int max_iter=100)
 		{
 			// convert responses to counts
 			responses_to_counts (); // initialize this.counts
@@ -45,12 +46,17 @@ namespace DawidSkene
 
 			// initialize
 			int iter = 0;
+			this.converged = false;
+			double[] old_class_marginals=null;
+			double[,,] old_error_rates=null;
 
 			initialize (); // initialize this.patient_classes - equation (3.1)
 
 			Console.WriteLine ("Iter\tlog-likelihood\tdelta-CM\tdelta-ER");
 
-			while(iter<max_iter)
+			double class_marginals_diff=0.0;
+			double error_rates_diff = 0.0;
+			while(!this.converged)
 			{
 				iter += 1;
 
@@ -65,7 +71,32 @@ namespace DawidSkene
 				// check likelihood: equation (2.7)
 				calc_likelihood();
 
-				Console.WriteLine ("{0}\t{1:0.000}\t\t", iter, this.log_L);
+				// check for convergence
+				if (old_class_marginals != null)
+				{
+					old_class_marginals=new double[this.nClasses];
+					old_error_rates=new double[this.nObservers, this.nClasses, this.nClasses];
+
+					class_marginals_diff=0.0;
+					for (int j = 0; j < this.nClasses; ++j)
+						class_marginals_diff += Math.Abs (this.class_marginals [j] - old_class_marginals [j]);
+					error_rates_diff = 0.0;
+					for(int  k=0; k<this.nObservers; ++k)
+						for (int j = 0; j < this.nClasses; ++j)
+							for (int l = 0; l < this.nClasses; ++l)
+								error_rates_diff += Math.Abs (this.error_rates[k,j,l] - old_error_rates[k,j,l]);
+					Console.WriteLine ("{0}\t{1:0.000}\t{2:0.000000}\t{3:0.000000}", iter, this.log_L, class_marginals_diff, error_rates_diff);
+					if ((class_marginals_diff < tol && error_rates_diff < tol) || iter > max_iter)
+						this.converged = true;
+				}
+				else
+				{
+					Console.WriteLine ("{0}\t{1:0.000}", iter, this.log_L);
+				}
+
+				// update current values
+				old_class_marginals = this.class_marginals;
+				old_error_rates = this.error_rates;
 			}
 
 			// Print final results
