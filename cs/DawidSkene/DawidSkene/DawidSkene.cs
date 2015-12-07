@@ -217,7 +217,7 @@ namespace DawidSkene
 			StringBuilder sb = new StringBuilder();
 			for (int k = 0; k < this.nObservers; k++)
 			{
-				sb.AppendLine (string.Format("observer {0}:", k));
+				sb.AppendLine (string.Format("Observer {0}: ", this.observers[k]));
 				for (int j = 0; j < this.nClasses; j++)
 				{
 					for (int l = 0; l < this.nClasses; l++)
@@ -235,7 +235,7 @@ namespace DawidSkene
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < this.nPatients; i++)
 			{
-				sb.Append (string.Format("{0} [", i));
+				sb.Append (string.Format("{0} [", this.patients[i]));
 				for (int j = 0; j < this.nClasses; ++j)
 					sb.Append (string.Format("{0:0.000} ", this.patient_classes [i, j]));
 				sb.Append ("]\n");
@@ -250,7 +250,7 @@ namespace DawidSkene
 			sb.Append ("[");
 			for(int j=0; j<this.nClasses; ++j)
 				sb.Append(string.Format("{0:0.00} ", this.class_marginals[j]));
-			sb.Append ("]\n");
+			sb.Append ("]");
 
 			return sb.ToString ();
 		}
