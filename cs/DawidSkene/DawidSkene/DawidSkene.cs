@@ -1,4 +1,9 @@
-﻿using System;
+﻿// Original Author: Dallas Card
+// The original python version of this code is available at: https://github.com/dallascard/dawid_skene
+//
+// Adapted to C# by Alexandry Augustin
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,12 +37,9 @@ namespace DawidSkene
 		{
 			// convert responses to counts
 			responses_to_counts ();
-			int patients = 0;
-			int observers=0;
-			int classes=0;
-			Console.WriteLine ("num Patients:{0}", patients);
-			Console.WriteLine ("Observers:{0}", observers);
-			Console.WriteLine ("Classes:{0}", classes);
+			Console.WriteLine ("num Patients: {0}", this.nPatients);
+			Console.WriteLine ("Observers: [{0}]", String.Join(" ", this.observers.ToArray()));
+			Console.WriteLine ("Classes: [{0}]", String.Join(" ", this.classes.ToArray()));
 
 			// initialize
 			int iter = 0;
