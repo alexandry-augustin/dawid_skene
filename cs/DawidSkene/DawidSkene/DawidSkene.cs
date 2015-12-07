@@ -91,7 +91,7 @@ namespace DawidSkene
 					Console.WriteLine ("{0}\t{1:0.000}", iter, this.log_L);
 				}
 
-				// update current values
+				// update current values (deep copy)
 				old_class_marginals = (double[])this.class_marginals.Clone();
 				old_error_rates = (double[,,])this.error_rates.Clone();
 			}
@@ -103,8 +103,9 @@ namespace DawidSkene
 			Console.WriteLine ("{0}", this.error_rates_str());
 			  
 			/*Console.WriteLine ("Incidence-of-error rates");
+			double[,] error_rates_slice=new double[this.nClasses, this.nClasses];
 			for (int k = 0; k < this.nObservers; ++k)
-				//print class_marginals * error_rates[k,:,:]*/
+				//print this.class_marginals * this.error_rates[k,:,:]*/
 
 			Console.WriteLine ("Patient classes");
 			Console.WriteLine ("{0}", this.patient_classes_str());
