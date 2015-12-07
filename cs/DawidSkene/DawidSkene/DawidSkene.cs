@@ -92,8 +92,8 @@ namespace DawidSkene
 				}
 
 				// update current values
-				old_class_marginals = this.class_marginals;
-				old_error_rates = this.error_rates;
+				old_class_marginals = (double[])this.class_marginals.Clone();
+				old_error_rates = (double[,,])this.error_rates.Clone();
 			}
 
 			// Print final results
