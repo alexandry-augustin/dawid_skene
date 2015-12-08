@@ -120,20 +120,19 @@ namespace DawidSkene
 		{
 			// determine the observers and classes
 			this.observers=this.responses.Select (n => n.observer).Distinct().ToList();
-			Utils.SmartSort (this.observers);
-			//this.observers.Sort ();
+			//Utils.SmartSort (this.observers);
+			this.observers.Sort ();
 			this.nObservers=this.observers.Count;
 
 			this.patients=this.responses.Select (n => n.patient).Distinct().ToList();
-			Utils.SmartSort (this.patients);
-			//this.patients.Sort ();
+			//Utils.SmartSort (this.patients);
+			this.patients.Sort ();
 			this.nPatients=this.patients.Count;
 
 			this.classes = this.responses.Select (n => n.label).Distinct ().ToList ();
-			Utils.SmartSort (this.classes);
-			//this.classes.Sort ();
+			//Utils.SmartSort (this.classes);
+			this.classes.Sort ();
 			this.nClasses=this.classes.Count;
-
 
 			// create a 3d array to hold counts
 			this.counts = new int[this.nPatients, this.nObservers, this.nClasses];
@@ -189,11 +188,6 @@ namespace DawidSkene
 				this.class_marginals[j] = class_sums[j] / (double)this.nPatients;
 				
 			// compute error rates
-			for(int  k=0; k<this.nObservers; ++k)
-				for (int j = 0; j < this.nClasses; ++j)
-					for (int l = 0; l < this.nClasses; ++l)
-						this.error_rates[k,j,l] = 0;
-
 			double[] patient_classes_slice=new double[this.nPatients];
 			int[] counts_slice=new int[this.nPatients];
 			double[] error_rates_slice=new double[this.nClasses];
@@ -226,14 +220,7 @@ namespace DawidSkene
 		}
 
 		private void e_step()
-		{
-			for (int i = 0; i < this.nPatients; ++i)
-				for (int j = 0; j < this.nClasses; ++j)
-					this.patient_classes[i,j] = 0;
-
-			int[,] counts_slice=new int[this.nObservers, this.nClasses];	//TODO remove
-			double[,] error_rates_slice=new double[this.nObservers, this.nClasses];	//TODO remove
-			double[,] error_rates_pow=new double[this.nObservers, this.nClasses]; //TODO remove
+		{					
 			double[] patient_classes_slice=new double[this.nClasses];
 			double patient_sum = 0;
 			double estimate = 0;
@@ -247,10 +234,7 @@ namespace DawidSkene
 					for(int  k=0; k<this.nObservers; ++k)
 						for (int l = 0; l < this.nClasses; ++l)
 						{
-							counts_slice[k,l]=this.counts[i,k,l];	//TODO remove
-							error_rates_slice[k,l]=this.error_rates[k,j,l];	//TODO remove
-							error_rates_pow[k,l]=Math.Pow(error_rates_slice[k,l], counts_slice[k,l]); //TODO remove
-							estimate *= error_rates_pow [k, l];
+							estimate *= Math.Pow(this.error_rates[k,j,l], this.counts[i,k,l]);
 						}
 							
 					this.patient_classes [i, j] = estimate;
@@ -276,9 +260,6 @@ namespace DawidSkene
 			double class_prior;
 			double patient_class_likelihood=1.0;
 			double patient_class_posterior=0.0;
-			int[,] counts_slice=new int[this.nObservers, this.nClasses];	//TODO remove
-			double[,] error_rates_slice=new double[this.nObservers, this.nClasses];	//TODO remove
-			double[,] error_rates_pow=new double[this.nObservers, this.nClasses]; //TODO remove
 			for (int i = 0; i < this.nPatients; ++i)
 			{
 				patient_likelihood = 0.0;
@@ -291,10 +272,7 @@ namespace DawidSkene
 					for (int k = 0; k < this.nObservers; ++k)
 						for (int l = 0; l < this.nClasses; ++l)
 						{
-							counts_slice [k, l] = this.counts [i, k, l];	//TODO remove
-							error_rates_slice [k, l] = this.error_rates [k, j, l];	//TODO remove
-							error_rates_pow [k, l] = Math.Pow (error_rates_slice [k, l], counts_slice [k, l]); //TODO remove
-							patient_class_likelihood *= error_rates_pow [k, l];
+							patient_class_likelihood *= Math.Pow (this.error_rates [k, j, l], this.counts [i, k, l]);
 						}
 
 					patient_class_posterior=class_prior * patient_class_likelihood;
