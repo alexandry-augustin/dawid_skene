@@ -105,12 +105,19 @@ namespace DawidSkene
 			Console.WriteLine ("Class marginals");
 			Console.WriteLine ("{0}", this.class_marginals_str());
 			Console.WriteLine ("Error rates");
-			Console.WriteLine ("{0}", this.error_rates_str());
+			Console.WriteLine ("{0}", this.error_rates_str(this.error_rates));
 			  
-			/*Console.WriteLine ("Incidence-of-error rates");
-			double[,] error_rates_slice=new double[this.nClasses, this.nClasses];
+			Console.WriteLine ("Incidence-of-error rates");
+			double[,,] inc_error_rates=new double[this.nObservers, this.nClasses, this.nClasses];
 			for (int k = 0; k < this.nObservers; ++k)
-				//print this.class_marginals * this.error_rates[k,:,:]*/
+				for (int j = 0; j < this.nClasses; ++j)
+					for (int l = 0; l < this.nClasses; ++l)
+						inc_error_rates [k, j, l] = 0;
+			for (int k = 0; k < this.nObservers; ++k)
+				for(int j=0; j<this.nClasses; ++j)
+					for(int l=0; l<this.nClasses; ++l)
+						inc_error_rates [k,j,l] += this.class_marginals[j] * this.error_rates[k,j,l];
+			Console.WriteLine ("{0}", this.error_rates_str(inc_error_rates));
 
 			Console.WriteLine ("Patient classes");
 			Console.WriteLine ("{0}", this.patient_classes_str());
@@ -290,7 +297,7 @@ namespace DawidSkene
 			}
 		}
 
-		public string error_rates_str()
+		public string error_rates_str(double[,,] error_rates)
 		{
 			StringBuilder sb = new StringBuilder();
 			for (int k = 0; k < this.nObservers; k++)
@@ -300,7 +307,7 @@ namespace DawidSkene
 				{
 					for (int l = 0; l < this.nClasses; l++)
 					{
-						sb.Append (string.Format("{0:0.00}\t", this.error_rates [k, j, l]));
+						sb.Append (string.Format("{0:0.00}\t", error_rates [k, j, l]));
 					}
 					sb.Append ("\n");
 				}
