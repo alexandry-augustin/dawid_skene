@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DawidSkene
 {
@@ -33,6 +35,23 @@ namespace DawidSkene
 
 			return ret;
 		}*/
+
+		/// <summary>
+		/// Sort by a list of string intelligently (i.e. "1", "2", "10" instead of "1", "10", "2")
+		/// </summary>
+		/// <param name="l">List of strings</param>
+		public static void SmartSort(List<string> l)
+		{
+			if(l==null)
+				return;
+			int m=0;
+			if (!int.TryParse (l[0], out m)) //is not integer
+				return;
+
+			List<int> temp = l.Select (int.Parse).ToList (); //convert string to int
+			temp.Sort ();
+			l = temp.Select (n => n.ToString ()).ToList (); //convert int to string
+		}
 	}
 }
 

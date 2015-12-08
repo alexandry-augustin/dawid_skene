@@ -120,20 +120,20 @@ namespace DawidSkene
 		{
 			// determine the observers and classes
 			this.observers=this.responses.Select (n => n.observer).Distinct().ToList();
-			this.observers.Sort ();
+			Utils.SmartSort (this.observers);
+			//this.observers.Sort ();
 			this.nObservers=this.observers.Count;
 
 			this.patients=this.responses.Select (n => n.patient).Distinct().ToList();
-			this.patients.Sort ();
+			Utils.SmartSort (this.patients);
+			//this.patients.Sort ();
 			this.nPatients=this.patients.Count;
 
 			this.classes = this.responses.Select (n => n.label).Distinct ().ToList ();
-			this.nClasses=this.classes.Count;
+			Utils.SmartSort (this.classes);
 			//this.classes.Sort ();
-			//sort by the classes intelligently (i.e. "1", "2", "10" instead of "1", "10", "2")
-			List<int> temp = this.classes.Select (int.Parse).ToList (); //convert string to int
-			temp.Sort ();
-			this.classes=temp.Select (n => n.ToString()).ToList ();
+			this.nClasses=this.classes.Count;
+
 
 			// create a 3d array to hold counts
 			this.counts = new int[this.nPatients, this.nObservers, this.nClasses];
