@@ -30,8 +30,8 @@ namespace DawidSkene
 		public List<string> observers { get; protected set; }
 
 		public double[,,] error_rates { get; protected set; }
-		double[] class_marginals;
-        double[,] patient_classes;
+		public double[] class_marginals { get; protected set; }
+		public double[,] patient_classes { get; protected set; }
 
 		public double log_L { get; protected set; }
 		public bool converged { get; protected set; }
