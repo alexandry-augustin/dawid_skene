@@ -4,7 +4,6 @@
 // Adapted to C# by Alexandry Augustin
 //
 // TODO: 
-// * Incidence-of-error rates
 // * random_initialization()
 // * majority_voting()
 
@@ -110,13 +109,12 @@ namespace DawidSkene
 			Console.WriteLine ("Incidence-of-error rates");
 			double[,,] inc_error_rates=new double[this.nObservers, this.nClasses, this.nClasses];
 			for (int k = 0; k < this.nObservers; ++k)
-				for (int j = 0; j < this.nClasses; ++j)
-					for (int l = 0; l < this.nClasses; ++l)
-						inc_error_rates [k, j, l] = 0;
-			for (int k = 0; k < this.nObservers; ++k)
 				for(int j=0; j<this.nClasses; ++j)
+				{
+					inc_error_rates [k, j, 0] = 0;
 					for(int l=0; l<this.nClasses; ++l)
 						inc_error_rates [k,j,l] += this.class_marginals[j] * this.error_rates[k,j,l];
+				}
 			Console.WriteLine ("{0}", this.error_rates_str(inc_error_rates));
 
 			Console.WriteLine ("Patient classes");
