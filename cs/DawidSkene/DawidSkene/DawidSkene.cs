@@ -2,6 +2,11 @@
 // The original python version of this code is available at: https://github.com/dallascard/dawid_skene
 //
 // Adapted to C# by Alexandry Augustin
+//
+// TODO: 
+// * Incidence-of-error rates
+// * random_initialization()
+// * majority_voting()
 
 using System;
 using System.Collections.Generic;
@@ -123,8 +128,12 @@ namespace DawidSkene
 			this.nPatients=this.patients.Count;
 
 			this.classes = this.responses.Select (n => n.label).Distinct ().ToList ();
-			this.classes.Sort ();
 			this.nClasses=this.classes.Count;
+			//this.classes.Sort ();
+			//sort by the classes intelligently (i.e. "1", "2", "10" instead of "1", "10", "2")
+			List<int> temp = this.classes.Select (int.Parse).ToList (); //convert string to int
+			temp.Sort ();
+			this.classes=temp.Select (n => n.ToString()).ToList ();
 
 			// create a 3d array to hold counts
 			this.counts = new int[this.nPatients, this.nObservers, this.nClasses];
