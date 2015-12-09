@@ -34,6 +34,7 @@ namespace DawidSkene
 
 		public double log_L { get; protected set; }
 		public bool converged { get; protected set; }
+		public int iter { get; protected set; }
 
 		public DawidSkene(List<Datum> responses)
         {
@@ -49,7 +50,7 @@ namespace DawidSkene
 			Console.WriteLine ("Classes: [{0}]", String.Join(" ", this.classes.ToArray()));
 
 			// initialize
-			int iter = 0;
+			this.iter = 0;
 			this.converged = false;
 			double[] old_class_marginals=null;
 			double[,,] old_error_rates=null;
