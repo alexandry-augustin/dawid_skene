@@ -104,6 +104,8 @@ namespace DawidSkene
 			// Print final results
 			Console.WriteLine ("Class marginals");
 			Console.WriteLine ("{0}", this.class_marginals_str());
+			Console.WriteLine ("Counts");
+			Console.WriteLine ("{0}", this.counts_str());
 			Console.WriteLine ("Error rates");
 			Console.WriteLine ("{0}", this.error_rates_str(this.error_rates));
 			  
@@ -307,6 +309,24 @@ namespace DawidSkene
 					for (int l = 0; l < this.nClasses; l++)
 					{
 						sb.Append (string.Format("{0:0.00}\t", error_rates [k, j, l]));
+					}
+					sb.Append ("\n");
+				}
+			}
+			return sb.ToString();
+		}
+
+		public string counts_str()
+		{
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < this.nPatients; i++)
+			{
+				sb.AppendLine (string.Format("Patient {0}: ", this.patients[i]));
+				for (int k = 0; k < this.nObservers; k++)
+				{
+					for (int l = 0; l < this.nClasses; l++)
+					{
+						sb.Append (string.Format("{0}\t", counts [i, k, l]));
 					}
 					sb.Append ("\n");
 				}
