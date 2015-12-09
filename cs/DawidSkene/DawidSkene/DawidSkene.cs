@@ -296,7 +296,7 @@ namespace DawidSkene
 			}
 		}
 
-		public string error_rates_str(double[,,] error_rates)
+		public string error_rates_str<T>(T[,,] error_rates)
 		{
 			StringBuilder sb = new StringBuilder();
 			for (int k = 0; k < this.nObservers; k++)
