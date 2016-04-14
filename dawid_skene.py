@@ -71,8 +71,6 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
     old_error_rates = None
 
     patient_classes = initialize(counts) #equation (3.1)
-    print patient_classes
-    sys.exit()
     
     print "Iter\tlog-likelihood\tdelta-CM\tdelta-ER"    
     

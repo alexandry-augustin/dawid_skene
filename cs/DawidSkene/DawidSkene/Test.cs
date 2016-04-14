@@ -8,10 +8,13 @@ namespace DawidSkene.Test
 		public static void Main(string[] args)
 		{
 			//Utils_Test ();
-			DawidSkene_Test ();
+			OriginalPaperTest ();
+			ForwardSamplingTest ();
 		}
-
-		public static void DawidSkene_Test ()
+		/// <summary>
+		/// Test with the dataset from the original paper Dawid and Skene (1979)
+		/// </summary>
+		public static void OriginalPaperTest ()
 		{
 			List<Datum> responses = Datum.load_data("../../../../../data/dawid_skene.csv", true, ';');
 			DawidSkene ds = new DawidSkene(responses);
@@ -25,6 +28,17 @@ namespace DawidSkene.Test
 
 			for(int i=0; i<ret.Length; i++)
 				Console.Write (string.Format("{0} ", ret[i]));
+		}
+		/// <summary>
+		/// Test using forward sampling
+		/// </summary>
+		public static void ForwardSamplingTest ()
+		{
+			int nPatients=45;
+			int nClasses=4;
+			int nObservers=5;
+
+			//Discrete class_marginals = ;
 		}
 	}
 }
