@@ -71,6 +71,9 @@ def run(responses, tol=0.00001, max_iter=100, init='average'):
     old_error_rates = None
 
     patient_classes = initialize(counts) #equation (3.1)
+    #patient_classes = random_initialization(counts)
+    #print patient_classes
+    #sys.exit()
     
     print "Iter\tlog-likelihood\tdelta-CM\tdelta-ER"    
     
@@ -359,7 +362,7 @@ def random_initialization(counts):
     # for each patient, choose a random initial class, weighted in proportion
     # to the counts from all observers
     for p in range(nPatients):
-        average = response_sums[p,:] / np.sum(response_sums[p,:],dtype=float)
+        average = response_sums[p,:] / np.sum(response_sums[p,:], dtype=float)
         patient_classes[p,np.random.choice(np.arange(nClasses), p=average)] = 1
         
     return patient_classes
