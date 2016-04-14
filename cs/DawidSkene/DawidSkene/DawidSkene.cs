@@ -18,6 +18,9 @@ namespace DawidSkene
     public class DawidSkene
     {
 		public List<Datum> responses;
+		/// <summary>
+		/// counts[nPatients, nObservers, nClasses]
+		/// </summary>
 		public int[,,] counts;
 
 		public int nPatients { get; protected set; }
@@ -28,6 +31,10 @@ namespace DawidSkene
 		public List<string> classes { get; protected set; }
 		public List<string> observers { get; protected set; }
 
+		/// <summary>
+		/// Error rates (confusion matrix) for each observer.
+		/// error_rates[k][j][l] is the probability that observer k, classifies a patient from class j to class l
+		/// </summary>
 		public double[,,] error_rates { get; protected set; }
 		public double[] class_marginals { get; protected set; }
 		public double[,] patient_classes { get; protected set; }
@@ -182,6 +189,39 @@ namespace DawidSkene
 			this.class_marginals=new double[this.nClasses];
 			this.error_rates=new double[this.nObservers, this.nClasses, this.nClasses];
 		}
+
+/*		private void random_initialization()
+		{
+			int[,] response_sums=new int[this.nPatients, this.nClasses];
+
+			// sum over observers
+			for(int  i=0; i<this.nPatients; ++i)
+				for(int j=0; j<this.nClasses; ++j)
+					for(int k=0; k<this.nObservers; ++k)
+						response_sums[i,j] += this.counts[i,k,j];
+
+			int[] response_sums_=new int[this.nPatients];
+
+			for (int i = 0; i < this.nPatients; ++i)
+				for (int j = 0; j < this.nClasses; ++j)
+					response_sums_[i] += response_sums[i,j];
+
+			// create an empty array
+			this.patient_classes=new double[this.nPatients, this.nClasses];
+
+//			// for each patient, choose a random initial class, weighted in proportion
+//			// to the counts from all observers
+//			for p in range(nPatients):
+//				average = response_sums[p,:] / np.sum(response_sums[p,:], dtype=float)
+//				patient_classes[p,np.random.choice(np.arange(nClasses), p=average)] = 1
+
+//			for (int i = 0; i < this.nPatients; ++i)
+//				for (int j = 0; j < this.nClasses; ++j)
+//					this.patient_classes[i,j] = response_sums[i,j] / (double)response_sums_[i];
+
+			this.class_marginals=new double[this.nClasses];
+			this.error_rates=new double[this.nObservers, this.nClasses, this.nClasses];
+		}*/
 
 		private void m_step()
 		{
